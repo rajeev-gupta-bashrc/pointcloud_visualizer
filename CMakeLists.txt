@@ -127,6 +127,7 @@ include_directories(
 
 catkin_install_python(PROGRAMS scripts/point_cloud_publisher.py
   scripts/seq_publishers.py
+  scripts/GraphVoI_seq_pub.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 ## Add cmake target dependencies of the library

@@ -5,6 +5,8 @@ import sensor_msgs.point_cloud2 as pc2
 import std_msgs.msg
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Point
+from geometry_msgs.msg import Quaternion
+
 
 import pickle
 import numpy as np
@@ -16,10 +18,10 @@ def get_8_point_bbox(point7):
         bbox7 = point7.cpu().numpy()
     except Exception:
         bbox7 = point7
-    cx, cy, cz = bbox7[0], bbox7[1], bbox7[2]
-    dx, dy, dz = bbox7[3], bbox7[4], bbox7[5]
+    theta = float(bbox7[6])
+    cx, cy, cz = float(bbox7[0]), float(bbox7[1]), float(bbox7[2])
+    dx, dy, dz = float(bbox7[3]), float(bbox7[4]), float(bbox7[5])
     # theta = 0
-    theta = bbox7[6]
     # print(len(bbox7))
     # print(theta)
     hx, hy, hz = dx / 2, dy / 2, dz / 2
@@ -79,6 +81,12 @@ def create_bounding_box_marker(bbox_point, id, rgb = None, namespace = ""):
         p2.x, p2.y, p2.z = bbox_point[end]
         marker.points.append(p2)
 
+    marker.pose.orientation = Quaternion()
+    marker.pose.orientation.x = 0.0
+    marker.pose.orientation.y = 0.0
+    marker.pose.orientation.z = 0.0
+    marker.pose.orientation.w = 1.0
+    
     marker.scale.x = 0.05  # Line width
     marker.color.r = 1.0
     marker.color.g = 0.0
