@@ -13,6 +13,13 @@ import numpy as np
 import os
 # import torch
 
+
+# ######### ROS things :)
+# # from object_detector import module
+# from object_detector.module import call
+# call()
+
+
 def get_8_point_bbox(point7):
     try:
         bbox7 = point7.cpu().numpy()
@@ -54,7 +61,7 @@ def num_pred_bbox(pred):
 def get_bbox_points_from_pred(pred):
     return pred['box3d_lidar']
 
-def create_bounding_box_marker(bbox_point, id, rgb = None, namespace = ""):
+def create_bounding_box_marker(bbox_point, id, rgb = None, namespace = "", duration=2):
     marker = Marker()
     marker.header.frame_id = "map"
     marker.header.stamp = rospy.Time.now()
@@ -96,8 +103,8 @@ def create_bounding_box_marker(bbox_point, id, rgb = None, namespace = ""):
         marker.color.r = rgb[0]
         marker.color.g = rgb[1]
         marker.color.b = rgb[2]
-    duration = rospy.rostime.Duration(2)
-    marker.lifetime = duration
+    _duration = rospy.rostime.Duration(duration)
+    marker.lifetime = _duration
     return marker
 
 

@@ -30,11 +30,11 @@ def get_points_from_bin(file_path):
 def main():
     rospy.init_node('seq_publisher', anonymous=True)
     rospy.loginfo("Waiting for 3 seconds...")
-    time.sleep(3)
+    # time.sleep(3)
     rospy.loginfo("Done waiting!")
     pub_pc = rospy.Publisher('/point_cloud', PointCloud2, queue_size=10)
     pub_bbox = rospy.Publisher('/bounding_box_marker', Marker, queue_size=10)
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(10)
     
     frame_path = '/home/rajeev-gupta/sensyn_ws/src/GD-MAE/data/kitti/testing/velodyne/'
     preds_path = '/home/rajeev-gupta/sensyn_ws/src/GD-MAE/data/kitti/testing/predi_2/'
@@ -62,17 +62,17 @@ def main():
         ## predi_bbox7s : dim(3) center(3) rot_y
         ## what we want : center(3) dim(3) rot_y
         # print(predi_bbox7s, 'grgr')
-        for b in predi_bbox7s:
-            dim = b[:3]
-            center = b[3:6]
-            b[:3] = center
-            b[3:6] = dim
-            x = b[0]
-            y = b[1]
-            z = b[2]
-            b[0] = -z
-            b[1] = -x
-            b[2] = y
+        # for b in predi_bbox7s:
+        #     dim = b[:3]
+        #     center = b[3:6]
+        #     b[:3] = center
+        #     b[3:6] = dim
+        #     x = b[0]
+        #     y = b[1]
+        #     z = b[2]
+            # b[0] = -z
+            # b[1] = -x
+            # b[2] = y
         # print(predi_bbox7s)
         
         
@@ -83,8 +83,7 @@ def main():
         # for i in range(len(anns_bbox7s)):
         #     anns_markers.append(create_bounding_box_marker(get_8_point_bbox(anns_bbox7s[i]), i, [0, 1, 0], namespace='anns_bbox')) #green annotations
         for i in range(len(predi_bbox7s)):
-            # print(predi_bbox7s[i])
-            predi_markers.append(create_bounding_box_marker(get_8_point_bbox(predi_bbox7s[i]), i, [1, 0, 0], namespace='predi_bbox')) #red annotations
+            predi_markers.append(create_bounding_box_marker(get_8_point_bbox(predi_bbox7s[i]), i, [1, 0, 0], namespace='predi_bbox', duration=1)) #red annotations
         
         # scores = get_scores_bbox(pred)
         
@@ -94,7 +93,9 @@ def main():
         pub_pc.publish(point_cloud)
 
         ## To pause at a frame: 
-        J = 22
+        J = 50
+        
+        ## Publish
         while not rospy.is_shutdown():
             for marker in predi_markers:
                 pub_bbox.publish(marker)
