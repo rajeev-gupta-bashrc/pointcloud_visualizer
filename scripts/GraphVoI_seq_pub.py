@@ -32,8 +32,8 @@ def main():
     rospy.loginfo("Waiting for 3 seconds...")
     # time.sleep(3)
     rospy.loginfo("Done waiting!")
-    pub_pc = rospy.Publisher('/point_cloud', PointCloud2, queue_size=10)
-    pub_bbox = rospy.Publisher('/bounding_box_marker', Marker, queue_size=10)
+    pub_pc = rospy.Publisher('/point_cloud_k', PointCloud2, queue_size=10)
+    pub_bbox = rospy.Publisher('/bounding_box_marker_k', Marker, queue_size=10)
     rate = rospy.Rate(10)
     
     frame_path = '/home/rajeev-gupta/sensyn_ws/src/GD-MAE/data/kitti/testing/velodyne/'
@@ -121,3 +121,10 @@ if __name__ == '__main__':
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
+
+    #         Z   
+    #         |   Y
+    #         |  /
+    # RIGHT   | /                     LEFT
+    #         |/
+    #         *------------>X

@@ -25,7 +25,7 @@ def get_8_point_bbox(point7):
         bbox7 = point7.cpu().numpy()
     except Exception:
         bbox7 = point7
-    theta = float(bbox7[6])
+    theta = -float(bbox7[6])
     cx, cy, cz = float(bbox7[0]), float(bbox7[1]), float(bbox7[2])
     dx, dy, dz = float(bbox7[3]), float(bbox7[4]), float(bbox7[5])
     # theta = 0
@@ -71,13 +71,15 @@ def create_bounding_box_marker(bbox_point, id, rgb = None, namespace = "", durat
     marker.action = Marker.ADD
 
     edges = [
-        # (0, 1), (1, 3), (3, 2), (2, 0),  # Top face
-        # (4, 5), (6, 4), (5, 7), (7, 6),  # Bottom face
-        # (0, 4), (1, 5), (2, 6), (3, 7)   # Vertical lines
-        (0, 1), (1, 2), (2, 3), (3, 0),  # front face YZ
-        (4, 5), (5, 6), (6, 7), (7, 4),  # rear face YZ
-        (0, 4), (1, 5), (2, 6), (3, 7),  # Horizontal lines X
-        (0, 2), (1, 3)                   # Cross in front face
+        # (0, 1), (1, 2), (2, 3), (3, 0),  # front face YZ
+        # (4, 5), (5, 6), (6, 7), (7, 4),  # rear face YZ
+        # (0, 4), (1, 5), (2, 6), (3, 7),  # Horizontal lines X
+        # (0, 2), (1, 3)                   # Cross in front face
+        ##for waymo GraphCE
+        (3, 2), (2, 6), (6, 7), (7, 3),  # front face YZ
+        (0, 1), (1, 5), (5, 4), (4, 0),  # rear face YZ
+        (0, 3), (1, 2), (5, 6), (4, 7),  # Horizontal lines X
+        (7, 2), (6, 3)                   # Cross in front face
     ]
 
     for start, end in edges:
@@ -113,6 +115,7 @@ def get_points_from_pkl(lidar_data):
     header = std_msgs.msg.Header()
     header.stamp = rospy.Time.now()
     header.frame_id = 'map'
+    print(point_array.shape)
     point_cloud = pc2.create_cloud_xyz32(header, point_array)
     return point_cloud
     
@@ -136,9 +139,9 @@ def main():
     score_threshold = 0.50
     rate = rospy.Rate(5)
     
-    frame_path = '/home/rajeev-gupta/sensyn_ws/src/GraphRCNN/Ventoy/waymo_data/data/waymo/waymo_processed_data_cp/train/lidar/seq_0_frame_0.pkl'
-    preds_path = '/home/rajeev-gupta/sensyn_ws/src/GraphRCNN/work_dirs/waymo_centerpoint_voxelnet_graphrcnn_6epoch_freeze/re_preds_5.pkl'
-    annos_path = '/home/rajeev-gupta/sensyn_ws/src/GraphRCNN/Ventoy/waymo_data/data/waymo/waymo_processed_data_cp/val/annos/'
+    frame_path = '/media/rajeev-gupta/Drive250/SENSYN_/from_sensyn_ws_src/GraphRCNN/Ventoy/waymo_data/data/waymo/waymo_processed_data_cp/train/lidar/seq_0_frame_0.pkl'
+    preds_path = '/media/rajeev-gupta/Drive250/SENSYN_/from_sensyn_ws_src/GraphRCNN/work_dirs/waymo_centerpoint_voxelnet_graphrcnn_6epoch_freeze/re_preds_5.pkl'
+    annos_path = '/media/rajeev-gupta/Drive250/SENSYN_/from_sensyn_ws_src/GraphRCNN/Ventoy/waymo_data/data/waymo/waymo_processed_data_cp/val/annos/'
     
     lidar_data = load_pickle(frame_path, 'rb')
     preds = load_pickle(preds_path, 'rb')
